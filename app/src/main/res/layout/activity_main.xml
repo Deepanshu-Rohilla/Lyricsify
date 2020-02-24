@@ -13,6 +13,14 @@
         app:layout_constraintBottom_toTopOf="@+id/current_track_label"
         app:layout_constraintTop_toTopOf="parent">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/headTrack"
+            style="@style/Widget.Cat.Button.Large"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+            android:text="Sweet child o' mine" />
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,7 +29,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/lyricsTV"
-                style="@style/Widget.Cat.Button.Large"
+                style="@style/Widget.Cat.Button.Small"
                 android:layout_width="match_parent"
 
                 android:layout_height="wrap_content"
@@ -38,7 +46,7 @@
         android:layout_marginBottom="10dp"
         android:gravity="center"
         android:lines="2"
-        android:text="title_current_track"
+        android:text="NO TRACK \n PLAYING "
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/seek_to"
@@ -51,14 +59,11 @@
         android:id="@+id/seek_to"
         android:layout_width="0dp"
         android:layout_height="24dp"
-        android:layout_marginStart="48dp"
-        android:layout_marginLeft="48dp"
         android:progressTint="@android:color/white"
         android:thumbTint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/llPlay"
-        app:layout_constraintEnd_toEndOf="@+id/llPlay"
-
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout

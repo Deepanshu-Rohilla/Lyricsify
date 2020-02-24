@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':spotify-app-remote-release-0.7.0', ':spotify-app-remote'
 rootProject.name='Lyricsify'

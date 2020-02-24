@@ -11,12 +11,17 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
@@ -28,4 +33,13 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
+
+    implementation 'com.spotify.android:auth:1.1.0'
+
+    implementation 'androidx.browser:browser:1.0.0'
+
+
+
+    implementation project(':spotify-app-remote')
+    implementation "com.google.code.gson:gson:2.8.5"
 }
