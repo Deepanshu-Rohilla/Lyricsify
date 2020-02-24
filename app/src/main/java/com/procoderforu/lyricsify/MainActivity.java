@@ -22,6 +22,9 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 
+import com.google.gson.Gson;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -42,7 +45,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.BasicManagedEntity;
+import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHttpResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,6 +65,8 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -138,12 +146,48 @@ public class MainActivity extends AppCompatActivity {
                     mHeadTrack.setText(trackName);
 
                     String ch = "%20";
-                    //String url = "https://api.lyrics.ovh/v1/"+artistName.toLowerCase().replace(" ", ch)+"/"+trackName.toLowerCase().replace(" ", ch);
-                    String url = "https://private-anon-ef40f651ea-lyricsovh.apiary-proxy.com/v1/" + artistName.toLowerCase().replace(" ", ch) + "/" + trackName.toLowerCase().replace(" ", ch);
-                    //String url = "https://api.lyrics.ovh/v1/"+artistName.toLowerCase()+"/"+trackName.toLowerCase();
+
+                    String url = "https://private-anon-ef40f651ea-lyricsovh.apiary-proxy.com/v1/" + artistName.toLowerCase().replace(" ", "+") + "/" + trackName.toLowerCase().replace(" ", "+");
+
+                    Log.d("link", url);
 
 
-                    new getLyrics().execute(url);
+                    AsyncHttpClient client = new AsyncHttpClient();
+                    client.get(url, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            String response = null;
+                            try {
+                                response = new String(responseBody, getCharset());
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            JSONObject json = null;
+                            try {
+                                json = new JSONObject(response);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            String lyrics = "No lyrics found";
+                            try {
+                                lyrics = json.getString("lyrics");
+                            } catch (JSONException e) {
+                                mLyricsTV.setText(lyrics);
+                                e.printStackTrace();
+                            }
+                            Log.d("lyrics", lyrics);
+                            mLyricsTV.setText(lyrics);
+
+                            Log.d("random", response);
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+                        }
+                    });
 
                     // setLyrics(trackName, artistName);
                     mPlayerStateButton.setText(
@@ -182,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         mConnectButton = findViewById(R.id.connect_button);
-        mConnectAuthorizeButton = findViewById(R.id.connect_authorize_button);
+
         mDisconnectButton = findViewById(R.id.disconnect_button);
 
         mLyricsTV = findViewById(R.id.lyricsTV);
@@ -243,8 +287,7 @@ public class MainActivity extends AppCompatActivity {
         }
         mConnectButton.setEnabled(true);
         mConnectButton.setText("CONNECT");
-        mConnectAuthorizeButton.setEnabled(true);
-        mConnectAuthorizeButton.setText("CONNECT AND AUTHORIZE");
+
 
         mPlayerStateButton.setText("No Track \n Playing");
         mToggleRepeatButton.clearColorFilter();
@@ -260,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logMessage(String msg, int duration) {
-        Toast.makeText(this, msg, duration).show();
+        // Toast.makeText(this, msg, duration).show();
         Log.d("random shit", msg);
     }
 
@@ -306,8 +349,7 @@ public class MainActivity extends AppCompatActivity {
         }
         mConnectButton.setEnabled(false);
         mConnectButton.setText("Connected");
-        mConnectAuthorizeButton.setEnabled(false);
-        mConnectAuthorizeButton.setText("Connected");
+
         getPlayerState();
 
     }
@@ -416,81 +458,14 @@ public class MainActivity extends AppCompatActivity {
     private void onConnecting() {
         mConnectButton.setEnabled(false);
         mConnectButton.setText("Connecting");
-        mConnectAuthorizeButton.setEnabled(false);
-        mConnectAuthorizeButton.setText("Connecting");
+
     }
 
     private void logError(Throwable throwable) {
-        Toast.makeText(this, "An error has occurred.", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "An error has occurred.", Toast.LENGTH_SHORT).show();
         Log.e(MainActivity.class.getSimpleName(), "", throwable);
     }
 
-
-    public class getLyrics extends AsyncTask<String, Integer, String> {
-
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            InputStream inputStream = null;
-
-            HttpClient client = new DefaultHttpClient();
-
-            HttpGet httpGet = new HttpGet(params[0]);
-            httpGet.addHeader("Content-type", "application/json");
-
-            String lyrics = "no lyrics found";
-
-
-            try {
-
-
-                HttpResponse response = client.execute(httpGet);
-                inputStream = response.getEntity().getContent();
-
-                // convert inputstream to string
-                String tempJson = "";
-                if (inputStream != null) {
-                    tempJson = convertInputStreamToString(inputStream);
-                    Log.i("App", "Data received:" + lyrics);
-
-                }
-                JSONObject jObject = new JSONObject(tempJson);
-
-                lyrics = jObject.getString("lyrics");
-
-
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return lyrics;
-
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            mLyricsTV.setText(s);
-        }
-
-        private String convertInputStreamToString(InputStream inputStream) throws IOException {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line = "";
-            String result = "";
-            while ((line = bufferedReader.readLine()) != null)
-                result += line;
-
-            inputStream.close();
-            return result;
-
-        }
-
-
-    }
 
     private class TrackProgressBar {
 

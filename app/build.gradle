@@ -38,9 +38,11 @@ dependencies {
 
     implementation 'androidx.browser:browser:1.0.0'
 
-
+    implementation 'com.loopj.android:android-async-http:1.4.9'
 
     implementation project(':spotify-app-remote')
+
+
 
     implementation "com.google.code.gson:gson:2.8.5"
 }
