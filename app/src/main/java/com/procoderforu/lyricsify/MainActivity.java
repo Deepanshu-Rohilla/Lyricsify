@@ -66,6 +66,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+
 import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
@@ -288,6 +289,11 @@ public class MainActivity extends AppCompatActivity {
         mConnectButton.setEnabled(true);
         mConnectButton.setText("CONNECT");
 
+        mLyricsTV.setText("No Lyrics found");
+        mHeadTrack.setText("No track playing");
+
+        // mSeekBar.setActivated(false);
+
 
         mPlayerStateButton.setText("No Track \n Playing");
         mToggleRepeatButton.clearColorFilter();
@@ -369,6 +375,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                         mSpotifyAppRemote = spotifyAppRemote;
+                        mSeekBar.setActivated(true);
                         MainActivity.this.onConnected();
                     }
 

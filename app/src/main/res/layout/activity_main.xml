@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
 
             android:layout_height="wrap_content"
-            android:text="Sweet child o' mine" />
+            android:text="No Track Found" />
 
         <ScrollView
             android:layout_width="match_parent"
