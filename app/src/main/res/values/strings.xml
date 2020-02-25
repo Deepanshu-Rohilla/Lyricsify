@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Lyricsify</string>
+    <string name="command_feedback">"'%1$s' command successful!"</string>
 </resources>
