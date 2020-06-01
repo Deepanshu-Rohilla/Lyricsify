@@ -7,3 +7,6 @@ Play songs on spotify with lyrics
 3. Press connect to integrate your spotify account.
 4. Enjoy singing with correct lyrics.
 
+![](output1.png)
+<br /> <br /> <br /> <br />
+![](output2.png)
